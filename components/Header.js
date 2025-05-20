@@ -26,9 +26,9 @@ export default function Header({handleAsideOpen}) {
             <header className="header flex flex-sb">
                 <div className="logo flex gap-2">
                     <h1>ADMIN</h1>
-                    {session ? <div className="headerham flex flex-center" onClick = {handleAsideOpen}>
+                     <div className="headerham flex flex-center" onClick = {handleAsideOpen}>
                         <RiBarChartHorizontalLine/>
-                    </div> : null}
+                    </div> 
                     
                 </div>
                 <div className="rightnav flex gap-2">

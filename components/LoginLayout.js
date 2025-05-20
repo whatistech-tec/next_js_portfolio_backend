@@ -12,13 +12,13 @@ export default function LoginLayout({children}) {
         </div>
     }
     const router = useRouter();
-    if (!session){
-        router.push('/auth/signin');
-        return null;
+    // if (!session){
+    //     router.push('/auth/signin');
+    //     return null;
         
-    }
+    // }
 
-    if (session){
+    if (!session){
         return <>
             {children}
         </>

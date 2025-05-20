@@ -43,19 +43,27 @@ export default function Blog(
         ev.preventDefault();
 
         if (isUploading){
-            await Promise.all(uploadImagesQueue)
+            await Promise.all(uploadImageQueue)
         }
 
-        const data = {title, slug, images, description, blogcategory, tags, status};
+        const data = {
+            title: title || '',
+            slug: slug || '',
+            images: Array.isArray(images) ? images : [],
+            description: description || '',
+            blogcategory: Array.isArray(blogcategory) ? blogcategory : [],
+            tags: Array.isArray(tags) ? tags : [],
+            status: status || 'draft', // set a default if needed
+            };
 
-        if (_id){
-            await axios.put('/api/blogs',{...data,_id})
-            toast.success('Data Updated')
-        }else{
-            await axios.post('/api/blogs',data)
-            toast.success('Blog Created')
-            
+        if (_id) {
+            await axios.put('/api/blogs', { ...data, _id });
+            toast.success('Data Updated');
+            } else {
+            await axios.post('/api/blogs', data);
+            toast.success('Blog Created');
         }
+
         setRedirect(true);
     };
     async function uploadImages(ev) {
@@ -73,12 +81,22 @@ export default function Blog(
                     })
                 )
             }
-            //wait for all images to finish uploading
-            await Promise.all(uploadImageQueue);
-            setIsUploading(false);
-            toast.success('Images Uploaded')
+            try {
+                await Promise.all(uploadImageQueue);
+                setIsUploading(false);
+                toast.success('Images Uploaded');
+            } catch (error) {
+                setIsUploading(false);
+                console.error('Image upload failed:', error);
+                toast.error('Failed to upload images.');
+            }
+
+            // //wait for all images to finish uploading
+            // await Promise.all(uploadImageQueue);
+            // setIsUploading(false);
+            // toast.success('Images Uploaded')
         }else{
-            toast.errors('An error occurred')
+            toast.error('An error occurred')
         }
     }
     if (redirect){
@@ -90,19 +108,21 @@ export default function Blog(
         setImages(images)
     }
 
-    function handleDeleteImage(index){
-        const updateImages = [...images];
-        uploadImages.splice(index, 1);
-        setImages(updateImages);
-        toast.success('Image Deleted Successifully')
-    }
+    function handleDeleteImage(index) {
+        const updatedImages = [...images];
+        updatedImages.splice(index, 1);
+        setImages(updatedImages);
+        toast.success('Image Deleted Successfully');
+}
+
 
     //for slug url
     const handleSlugChange = (ev) => {
         const inputValue = ev.target.value;
-        const newSlug = inputValue.replace(/\s+/g, '-')
+        const newSlug = inputValue.trim().toLowerCase().replace(/\s+/g, '-');
         setSlug(newSlug);
-    }
+};
+
 
     return <>
     <form className="addWebsiteform" onSubmit={createBlog}>
@@ -176,33 +196,36 @@ export default function Blog(
                 value={description}
                 onChange={(ev) => setDescription(ev.text)}
                 style={{width: '100%', height: '400px'}}
-                renderHTML={(text) => {
+                renderHTML={(text) => (
                     <ReactMarkdown components={{
-                        code: ({node, inline, className, children, ...props}) => {
-                            //for code
-                            const match = /language-(\w+)/.exec(className || '');
-                            if (inline){
-                                return <code>{children}</code>
-                            }else if(match){
-                                return(
-                                    <div style={{position: 'relative'}}>
-                                        <pre style={{padding: '0', borderRadius: '5px', overflowX: 'auto', whitespace: 'pre-wrap'}} {...props}>
-                                            <code>{children}</code>
-                                        </pre>
-                                        <button style={{position:'absolute', top: '0', right: '0', zIndex: '1'}} onClick={() => navigator.clipboard.writeText(children)}>
-                                            copy code
-                                        </button>
-
-                                    </div>
-                                )
-                            }else{
-                                return <code {...props}>{children}</code>
-                            }
+                        code: ({ node, inline, className, children, ...props }) => {
+                        const match = /language-(\w+)/.exec(className || '');
+                        if (inline) {
+                            return <code>{children}</code>;
+                        } else if (match) {
+                            return (
+                            <div style={{ position: 'relative' }}>
+                                <pre style={{ padding: '0', borderRadius: '5px', overflowX: 'auto' }} {...props}>
+                                <code>{children}</code>
+                                </pre>
+                                <button
+                                style={{ position: 'absolute', top: '0', right: '0', zIndex: '1' }}
+                                onClick={() => navigator.clipboard.writeText(children)}
+                                type="button"
+                                >
+                                Copy
+                                </button>
+                            </div>
+                            );
+                        } else {
+                            return <code {...props}>{children}</code>;
+                        }
                         }
                     }}>
                         {text}
-                   </ReactMarkdown>
-                }}
+                    </ReactMarkdown>
+                )}
+
             />
 
         </div>

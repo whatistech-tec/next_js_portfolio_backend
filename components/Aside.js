@@ -31,7 +31,7 @@ export default function Aside({asideOpen, handleAsideOpen}) {
 
         const {data: session} = useSession();
         
-        if (session){
+        if (!session){
 
                 return <>
                         <LoginLayout>
