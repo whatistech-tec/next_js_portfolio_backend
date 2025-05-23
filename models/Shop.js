@@ -1,16 +1,18 @@
-const {Schema, models, model} = require('mongoose');
+import { Schema, models, model } from 'mongoose';
 
 const ProductSchema = new Schema({
     title: {type:String},
-    slug: {type:String, required:true},
+    slug: {type:String, required:true, unique:true},
     images: [{type:String}],
     description: {type:String},
     afilink: {type:String},
-    tags: {type:String},
-    price: {type:String},
+    tags: [{type:String}],
+    price: {type:Number},
     status: {type:String},
 },{
     timestamps:true,
-})
+});
 
-export const Shop = models.Shop || model('Shop',ProductSchema, 'shops');
+const Shop = models.Shop || model('Shop', ProductSchema, 'shops');
+
+export default Shop;

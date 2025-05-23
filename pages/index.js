@@ -46,10 +46,34 @@ export default function Home() {
         const dataShop = await responseShop.json();
         const dataPhotos = await responseGallery.json();
 
-        setBlogData(data);
-        setProjectData(dataProject);
-        setPhotoData(dataPhotos);
-        setShopData(dataShop);
+        if (Array.isArray(data)) {
+  setBlogData(data);
+} else {
+  console.error('Expected blog data to be an array:', data);
+  setBlogData([]);
+}
+
+        if (Array.isArray(dataProject)) {
+          setProjectData(dataProject);
+        } else {
+          console.error('Expected project data to be an array:', dataProject);
+          setProjectData([]);
+        }
+
+        if (Array.isArray(dataPhotos)) {
+          setPhotoData(dataPhotos);
+        } else {
+          console.error('Expected photo data to be an array:', dataPhotos);
+          setPhotoData([]);
+        }
+
+        if (Array.isArray(dataShop)) {
+          setShopData(dataShop);
+        } else {
+          console.error('Expected shop data to be an array:', dataShop);
+          setShopData([]);
+        }
+
         setLoading(false);
 
       } catch (error){
@@ -72,10 +96,9 @@ export default function Home() {
   const years = Object.keys(monthlyData);
   const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const datasets = years.map(year =>({
-    label: `$(year)`,
+    label: `${year}`,
     data: monthlyData[year] || Array(12).fill(0),
-    backgroundColor: `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)},${Math.floor(Math.random() * 256)},${Math.floor(Math.random() * 256)})`
-
+    backgroundColor: `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)},${Math.floor(Math.random() * 256)}, 0.6)`,
   }));
   const data = {
     labels,
