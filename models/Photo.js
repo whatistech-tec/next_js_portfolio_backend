@@ -1,12 +1,13 @@
-const {Schema, models, model} = require('mongoose');
+import { Schema, models, model } from 'mongoose';
 
 const photoSchema = new Schema({
     title: {type:String},
-    slug: {type:String, required:true},
+    slug: {type:String, required:true, unique:true},
     images: [{type:String}],
-    
 },{
     timestamps:true,
-})
+});
 
-export const Photos = models.Photo || model('Photos',photoSchema, 'photos');
+const Photo = models.Photo || model('Photo', photoSchema, 'photos');
+
+export default Photo;

@@ -1,12 +1,12 @@
-
-const {Schema, models, model} = require('mongoose');
+import { Schema, models, model } from 'mongoose';
 
 const ProfileSchema = new Schema({
-    email: {type:String},
-    password: {type:String},
-   
+    email: {type:String, required:true, unique:true},
+    password: {type:String, required:true},
 },{
     timestamps:true,
-})
+});
 
-export const Profile = models.Profile || model('Profile',ProfileSchema, 'admin');
+const Profile = models.Profile || model('Profile', ProfileSchema, 'admin');
+
+export default Profile;
